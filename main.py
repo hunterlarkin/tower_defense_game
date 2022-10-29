@@ -1,6 +1,4 @@
 import pygame
-import sys
-
 
 WIDTH, HEIGHT = 800, 800
 SCREEN_COLOR = (73, 232, 255) #Light Blue
