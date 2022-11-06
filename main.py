@@ -27,7 +27,10 @@ class Rectangle:
     
     def add_text(self, text, color, x_pos, y_pos):
         self.screen.blit(self.font.render(text, True, color), (x_pos, y_pos))
+   
 
+    #utilized the collidepoint function in the Rect class of pygame to detect if 
+    #the mouse cursor is within the bounds of the Rect object
     def in_bounds(self, rect_object, event):        
         return rect_object.collidepoint(event)
 
@@ -36,7 +39,7 @@ def main():
     #boolean to check if game is running.
     game_is_running = True
 
-    #start button object for the start menu.
+    #instantiating different class objects
     start_button = Rectangle()
     exit_button = Rectangle() 
     game_screen = Rectangle()   
@@ -52,14 +55,15 @@ def main():
                 game_is_running = False
 
             if game_state == 'start menu':
-                if event.type == pygame.MOUSEBUTTONDOWN: 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    #created these Rect objects for the different menu buttons in order to pass as arguments in order to use "collidepoint" 
+                    #function in the Rect class 
                     start_rect_object = start_button.create_Rect_object(650, 300, 200, 125)   
                     exit_rect_object = exit_button.create_Rect_object(650, 450, 200, 125)                                    
                     if start_button.in_bounds(start_rect_object, event.pos):
-                        game_state = 'game'
+                        game_state = 'game' #enters the game state
                     if exit_button.in_bounds(exit_rect_object, event.pos):
-                        game_is_running = False #quits the game if exit button is clicked
-                    
+                        game_is_running = False #quits the game if exit button is clicked                    
 
 
         if game_state == 'start menu':
