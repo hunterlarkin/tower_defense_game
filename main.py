@@ -4,16 +4,15 @@ import player
 import towers
 
 
-WIDTH, HEIGHT = 2000, 1500
+WIDTH, HEIGHT = 1500, 1250
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 BLUE = (0,0,255)
 ORANGE = (255,140,0)
 
 FPS = 60 #frames per second
-frames_per_second = pygame.time.Clock()
-frames_per_second.tick(FPS) #Setting the frame rate
-
+clock = pygame.time.Clock()
+frames_per_second = str(clock.get_fps())
 
 class Rectangle:
     def __init__(self):
@@ -23,8 +22,6 @@ class Rectangle:
         self.font = pygame.font.SysFont('Arial', 30)
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.screen.fill((ORANGE))
-
-
 
     def draw_rectangle(self, color, x_pos, y_pos, width, height):
         self.rect = pygame.draw.rect(self.screen, color, (x_pos, y_pos, width, height))
@@ -45,9 +42,13 @@ def main():
     exit_button = Rectangle() 
     game_screen = Rectangle() 
     tower = Rectangle()
+    fps_font = Rectangle()
+    fps_display = fps_font.font.render(frames_per_second, False, (0,0,0))
 
-    #rect object for tower instance.
-    tower_rect_object = tower.create_Rect_object(1000, 670, 125, 125)  
+    #rect object for tower/button instances.
+    tower_rect_object = tower.create_Rect_object(1000, 670, 125, 125)
+    start_rect_object = start_button.create_Rect_object(650, 300, 200, 125)   
+    exit_rect_object = exit_button.create_Rect_object(650, 450, 200, 125)   
 
     #boolean if rect's are being dragged by cursor
     being_dragged = False
@@ -55,35 +56,31 @@ def main():
     game_state = 'start menu'
     #main game loop
     while game_is_running:
-        #pygame.display.update()
-
+        fps_font.screen.blit(fps_display, (25, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_is_running = False
 
             if game_state == 'start menu':
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    #created these Rect objects for the different menu buttons in order to pass as arguments in order to use "collidepoint" 
-                    #function in the Rect class 
-                    start_rect_object = start_button.create_Rect_object(650, 300, 200, 125)   
-                    exit_rect_object = exit_button.create_Rect_object(650, 450, 200, 125)                                    
+                if event.type == pygame.MOUSEBUTTONDOWN:                                                      
                     if start_rect_object.collidepoint(event.pos):
                         game_state = 'game' #enters the game state
                     if exit_rect_object.collidepoint(event.pos):
-                        game_is_running = False #quits the game if exit button is clicked                    
+                        game_is_running = False #quits the game if exit button is clicked  
+                game_screen.screen.fill((ORANGE))                  
 
 
             if game_state == 'start menu':
-                start_button.draw_rectangle(BLACK, 650, 300, 200, 125)
-                start_button.add_text('START', WHITE, 700, 340)
+                start_button.draw_rectangle(BLACK, start_rect_object.x, start_rect_object.y, start_rect_object.width, start_rect_object.height)
+                start_button.add_text('START', WHITE, start_rect_object.x, start_rect_object.y)
 
-                exit_button.draw_rectangle(BLACK, 650, 450, 200, 125)
-                exit_button.add_text('EXIT', WHITE, 715, 490)
+                exit_button.draw_rectangle(BLACK, exit_rect_object.x, exit_rect_object.y, exit_rect_object.width, exit_rect_object.height)
+                exit_button.add_text('EXIT', WHITE, exit_rect_object.x, exit_rect_object.y)
             
             elif game_state == 'game':
                 #game screen drawing
                 game_screen.draw_rectangle(BLUE, 0, 0, WIDTH, HEIGHT)
-                game_screen.add_text('Welcome', WHITE, 700, 70)
+                game_screen.add_text('Welcome', WHITE, 1000, 70)
 
                 #tower test rectangle
                 #tower.draw_rectangle(BLACK, 1000, 670, 125, 125)
@@ -106,9 +103,14 @@ def main():
                         tower_rect_object.x = (event.pos[0] + x_offset)
                         tower_rect_object.y = (event.pos[1] + y_offset)
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        game_state = 'start menu'
 
 
                 tower.draw_rectangle(BLACK, tower_rect_object.x, tower_rect_object.y, tower_rect_object.width, tower_rect_object.height)
+        
+        clock.tick(60)
         pygame.display.update()
             
     pygame.quit()
